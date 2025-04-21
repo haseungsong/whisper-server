@@ -24,5 +24,3 @@ ENV MODEL_SIZE=tiny
 # Expose the port that the app will run on
 EXPOSE 5000
 
-# Start the application using gunicorn (Production-ready web server for Flask)
-CMD ["gunicorn", "server:app", "--timeout", "60", "--preload"]
