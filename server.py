@@ -59,4 +59,5 @@ def analyze():
 # ✅ 로컬 테스트용 (Railway는 gunicorn 사용 권장)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    # 디버그 모드 활성화
+    app.run(host="0.0.0.0", port=port, debug=True)  # debug=True 추가
