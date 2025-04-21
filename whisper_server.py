@@ -22,42 +22,34 @@ elif ffmpeg_path:
 
 # -------- Flask & Whisper Setup --------
 app = Flask(__name__)
-# Load Whisper model (choose base/small/medium/large via MODEL_SIZE env var)
+
+# Load Whisper model ONCE
 model_size = os.environ.get("MODEL_SIZE", "base")
-print(f"Loading Whisper model: {model_size}", flush=True)
+print(f"▶ Loading Whisper model: {model_size}", flush=True)
 model = whisper.load_model(model_size)
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
-    # Expect audio file under 'audio'
-    audio_file = request.files.get('audio')
+    audio_file = request.files.get("audio")
     if not audio_file:
         return jsonify({"error": "No audio file provided"}), 400
 
-    # Generate unique temp filename
-    unique_name = f"audio_{uuid.uuid4().hex}.wav"
-    temp_path = os.path.join('/tmp', unique_name)
-
-    # Save uploaded file
+    # Create temp path
+    filename = f"audio_{uuid.uuid4().hex}.wav"
+    temp_path = os.path.join("/tmp", filename)
     audio_file.save(temp_path)
 
-    # Transcribe with Whisper
     try:
         result = model.transcribe(temp_path, language="ko")
-        text = result.get('text', '')
+        text = result.get("text", "")
     except Exception as e:
-        # Cleanup temp file
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
+        os.remove(temp_path)
         return jsonify({"error": str(e)}), 500
 
-    # Remove temp file
-    if os.path.exists(temp_path):
-        os.remove(temp_path)
-
+    os.remove(temp_path)
     return jsonify({"text": text})
 
+# ✅ Entry point
 if __name__ == "__main__":
-    # Use PORT env var if provided (Render.com sets it)
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
