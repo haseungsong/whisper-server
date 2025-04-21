@@ -28,12 +28,10 @@ model_size = os.environ.get("MODEL_SIZE", "tiny")
 print(f"▶ Loading Whisper model: {model_size}", flush=True)
 model = whisper.load_model(model_size)
 
-
 # ✅ 기본 health check 라우트 (컨테이너가 죽지 않게 유지)
 @app.route("/", methods=["GET"])
 def health():
     return "🟢 Whisper API is running!", 200
-
 
 # ✅ 실제 분석 라우트
 @app.route("/analyze", methods=["POST"])
@@ -52,11 +50,11 @@ def analyze():
         text = result.get("text", "")
     except Exception as e:
         os.remove(temp_path)
-        return jsonify({"error": str(e)}), 500
+        # Return generic error message to the client
+        return jsonify({"error": "Internal Server Error"}), 500
 
     os.remove(temp_path)
     return jsonify({"text": text})
-
 
 # ✅ 로컬 테스트용 (Railway는 gunicorn 사용 권장)
 if __name__ == "__main__":

@@ -4,6 +4,11 @@ FROM python:3.10-slim
 # Set the working directory
 WORKDIR /app
 
+# Install ffmpeg
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the requirements.txt into the container
 COPY requirements.txt /app/
 
