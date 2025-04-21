@@ -1,0 +1,4 @@
+flask
+gunicorn
+openai-whisper       # pip 패키지명이 다를 수 있으니 확인
+ffmpeg-python        # optional, ffmpeg 래퍼
