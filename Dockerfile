@@ -14,8 +14,8 @@ RUN pip install -r requirements.txt
 # 소스 코드 복사
 COPY . .
 
-# 포트 지정
+# 포트 환경변수
 ENV PORT=5000
 
-# 실행
-CMD ["python", "whisper_server.py"]
+# ✅ Gunicorn으로 Flask 실행 (핵심)
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "whisper_server:app"]
